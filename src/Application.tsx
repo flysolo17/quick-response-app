@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthRoute from "./component/AuthRoute";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
 import NotFoundPage from "./pages/NotFound";
-import StudentPage from "./pages/Student";
-import TeacherPage from "./pages/Teacher";
-
+import DashBoardPage from "./pages/DashBoard";
+import AccountPage from "./pages/Account";
+import AboutPage from "./pages/About";
+import "./App.css";
 interface ApplictionProps {}
 
 const Appliction: React.FunctionComponent<ApplictionProps> = (props) => {
@@ -14,21 +15,38 @@ const Appliction: React.FunctionComponent<ApplictionProps> = (props) => {
     <BrowserRouter>
       <Routes>
         <Route
-          path="/"
+          path="/dashboard"
           element={
             <AuthRoute>
-              <TeacherPage />
+              <DashBoardPage />
             </AuthRoute>
           }
         />
         <Route
-          path="/student"
+          path="/account"
           element={
             <AuthRoute>
-              <StudentPage />
+              <AccountPage />
             </AuthRoute>
           }
         />
+        <Route
+          path="/about"
+          element={
+            <AuthRoute>
+              <AboutPage />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <AuthRoute>
+              <DashBoardPage />
+            </AuthRoute>
+          }
+        />
+
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/*" element={<NotFoundPage />} />

@@ -45,7 +45,7 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
     middleName: "",
     lastName: "",
     idNumber: "",
-    type: "Teacher",
+    type: "",
     email: "",
     password: "",
     loading: false,
@@ -61,9 +61,8 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
     if (!istate.loading) {
       isetState({ ...istate, loading: true });
       timer.current = window.setTimeout(() => {
-        isetState({ ...istate, loading: false });
         signUp();
-        navigate("/");
+        isetState({ ...istate, loading: false });
       }, 2000);
     }
   };
@@ -174,30 +173,18 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
                       <TextField
                         variant="outlined"
                         label="Firstname"
-                        value={istate.firstName}
-                        onChange={(e) =>
-                          isetState({ ...istate, firstName: e.target.value })
-                        }
                         style={{ width: "250px", margin: "2.5px" }}
                       />
                       <TextField
                         fullWidth
                         variant="outlined"
                         label="Middlename"
-                        value={istate.middleName}
-                        onChange={(e) =>
-                          isetState({ ...istate, middleName: e.target.value })
-                        }
                         style={{ width: "250px", margin: "2.5px" }}
                       />
                       <TextField
                         fullWidth
                         variant="outlined"
                         label="Lastname"
-                        value={istate.lastName}
-                        onChange={(e) =>
-                          isetState({ ...istate, lastName: e.target.value })
-                        }
                         style={{ width: "250px", margin: "2.5px" }}
                       />
                     </Box>
@@ -210,10 +197,6 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
                       fullWidth
                       variant="outlined"
                       label="Email"
-                      value={istate.email}
-                      onChange={(e) =>
-                        isetState({ ...istate, email: e.target.value })
-                      }
                       type={"email"}
                     />
                   </Box>
@@ -226,10 +209,6 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
                         fullWidth
                         variant="outlined"
                         label="ID number"
-                        value={istate.idNumber}
-                        onChange={(e) =>
-                          isetState({ ...istate, idNumber: e.target.value })
-                        }
                         type={"number"}
                         style={{ margin: "2.5px" }}
                       />
@@ -238,10 +217,6 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
                         variant="outlined"
                         label="Password"
                         type={"password"}
-                        value={istate.password}
-                        onChange={(e) =>
-                          isetState({ ...istate, password: e.target.value })
-                        }
                         style={{ margin: "2.5px" }}
                       />
                     </Box>
@@ -252,27 +227,41 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
                     <FormLabel id="demo-controlled-radio-buttons-group">
                       Account Type
                     </FormLabel>
-                    <RadioGroup
-                      row
-                      defaultValue="Teacher"
-                      aria-labelledby="demo--controlled-radio-buttons-group"
-                      name="controlled-radio-buttons-group"
-                      value={istate.type}
-                      onChange={(e) =>
-                        isetState({ ...istate, type: e.target.value })
-                      }
-                    >
-                      <FormControlLabel
-                        value="Student"
-                        control={<Radio />}
-                        label="Student"
-                      />
-                      <FormControlLabel
-                        value="Teacher"
-                        control={<Radio />}
-                        label="Teacher"
-                      />
-                    </RadioGroup>
+                    <FormControl>
+                      <Box
+                        sx={{ display: "inline-flex" }}
+                        style={{
+                          marginTop: "10px",
+                          marginBottom: "30px",
+                          overflow: "hidden",
+                          height: "40px",
+                          marginLeft: "auto",
+                          marginRight: "auto",
+                        }}
+                      >
+                        <input
+                          className="radio__input"
+                          type={"radio"}
+                          value="Student"
+                          name="radio"
+                          id="student"
+                          defaultChecked
+                        ></input>
+                        <label className="radio__label" htmlFor={"student"}>
+                          I am a Student
+                        </label>
+                        <input
+                          className="radio__input"
+                          type={"radio"}
+                          value="Student"
+                          name="radio"
+                          id="teacher"
+                        ></input>
+                        <label className="radio__label" htmlFor={"teacher"}>
+                          I am a Teacher
+                        </label>
+                      </Box>
+                    </FormControl>
                   </FormControl>
 
                   <Box
@@ -282,24 +271,24 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
                       justifyContent: "center",
                     }}
                   >
-                    {istate.loading && (
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <CircularProgress />
-                      </Box>
-                    )}
+                          {istate.loading && (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <CircularProgress />
+              </Box>
+            )}
+
                   </Box>
 
                   <ColorButton
                     fullWidth
                     variant="contained"
                     size="large"
-                    onClick={handleButtonClick}
                     style={{ marginBottom: "20px" }}
                   >
                     Create Account
