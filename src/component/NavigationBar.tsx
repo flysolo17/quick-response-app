@@ -15,9 +15,7 @@ const NavigationBar: React.FunctionComponent<INavigationBarProps> = (props) => {
           <ul className="header">
             <li className="header-row">
               <img src={logo} alt="logo" className="header-logo" />
-              <div className="header-label">
-                Quick Response made by Groupname
-              </div>
+              <div className="header-label">Quick Response App</div>
             </li>
           </ul>
         </div>
