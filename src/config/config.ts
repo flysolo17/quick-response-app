@@ -3,12 +3,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
-  apiKey: "AIzaSyCJKdKxfhLjiy0Q1FbhY4F5ydy5nxKGdY0",
-  authDomain: "quick-response-31c9c.firebaseapp.com",
-  projectId: "quick-response-31c9c",
-  storageBucket: "quick-response-31c9c.appspot.com",
-  messagingSenderId: "51385186855",
-  appId: "1:51385186855:web:3966b5fc64fa6c31136c02",
+  apiKey: "AIzaSyAuHs_O4yYNEtMBKykaIlYJ_jlw8EmVIcI",
+  authDomain: "calvin-project-f40c8.firebaseapp.com",
+  projectId: "calvin-project-f40c8",
+  storageBucket: "calvin-project-f40c8.appspot.com",
+  messagingSenderId: "553163939988",
+  appId: "1:553163939988:web:74d4ed007e7b167b1c9481",
+  measurementId: "G-V3SY3XEJKN",
 };
 
 // Initialize Firebase

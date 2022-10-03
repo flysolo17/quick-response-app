@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Box, Stack, Grid, Button } from "@mui/material";
 import logo from "../image/logo.png";
-
+import { signOut } from "firebase/auth";
+import { auth } from "../config/config";
+import { useNavigate } from "react-router-dom";
+import { useQRCode } from "next-qrcode";
+import { useAuth } from "../context/AuthContext";
+import { firestore } from "../config/config";
 interface AccountPageProps {}
 
-const AccountPage: React.FunctionComponent<AccountPageProps> = () => {
+const AccountPage: React.FunctionComponent<AccountPageProps> = (props) => {
   const theme = createTheme({
     typography: {
       allVariants: {
@@ -13,6 +18,10 @@ const AccountPage: React.FunctionComponent<AccountPageProps> = () => {
       },
     },
   });
+  const { users, currentUser } = useAuth();
+  const { Canvas } = useQRCode();
+  const navigate = useNavigate();
+
   return (
     <div>
       <ThemeProvider theme={theme}>
@@ -64,7 +73,17 @@ const AccountPage: React.FunctionComponent<AccountPageProps> = () => {
                   color: "#ffff",
                 }}
               >
-                <img src={logo} alt="qr-code" />
+                <Canvas
+                  text={currentUser?.uid!}
+                  options={{
+                    type: "image/jpeg",
+                    quality: 0.3,
+                    level: "M",
+                    margin: 3,
+                    scale: 4,
+                    width: 150,
+                  }}
+                />
                 <span
                   style={{
                     marginTop: "auto",
@@ -89,75 +108,36 @@ const AccountPage: React.FunctionComponent<AccountPageProps> = () => {
                 <label style={{ margin: "auto" }}>Middlename</label>
                 <label style={{ paddingRight: "0px" }}>Lastname</label>
               </Box>
-              <Box
-                style={{
-                  display: "inline-flex",
-                  justifyContent: "left",
-                  padding: "5px",
-                  color: "#ffff",
-                }}
+              <Stack
+                sx={{ display: "flex", justifyContent: "space-between" }}
+                direction={"row"}
               >
-                <input
-                  className="account_input"
-                  style={{
-                    border: "none",
-                    textAlign: "left",
-                  }}
-                  value="Sample"
-                />
-                <input
-                  className="account_input"
-                  style={{
-                    textAlign: "center",
-                    marginLeft: "70px",
-                  }}
-                  value="Sample"
-                />
-                <input
-                  className="account_input"
-                  style={{
-                    textAlign: "center",
+                <label className="account_input">{users?.firstName}</label>
+                <label className="account_input">{users?.middleName}</label>
+                <label className="account_input">{users?.lastName}</label>
+              </Stack>
 
-                    marginLeft: "95px",
-                  }}
-                  value="Sample"
-                />
-              </Box>
               <Box
                 style={{
                   display: "inline-flex",
+                  justifyContent: "center",
                   marginTop: "10px",
                   padding: "5px",
                   color: "#ffff",
                 }}
               >
-                <label style={{ paddingLeft: "0px" }}>Account Type</label>
-                <label style={{ marginLeft: "200px" }}>ID Number</label>
+                <label style={{ paddingLeft: "0px" }}>Account</label>
+                <label style={{ margin: "auto" }}> Email </label>
+                <label style={{ paddingRight: "0px" }}>ID Number</label>
               </Box>
-              <Box
-                style={{
-                  display: "inline-flex",
-                  padding: "10px",
-                  color: "#ffff",
-                }}
+              <Stack
+                sx={{ display: "flex", justifyContent: "space-between" }}
+                direction={"row"}
               >
-                <input
-                  className="account_input"
-                  style={{
-                    textAlign: "left",
-                    color: "white",
-                  }}
-                  value="Teacher"
-                />
-                <input
-                  className="account_input"
-                  style={{
-                    textAlign: "left",
-                    marginLeft: "105px",
-                  }}
-                  value="03161704870"
-                />
-              </Box>
+                <label className="account_input">{users?.type}</label>
+                <label className="account_input">{users?.email}</label>
+                <label className="account_input">{users?.idNumber}</label>
+              </Stack>
               <Box
                 style={{
                   display: "flex",
@@ -186,6 +166,10 @@ const AccountPage: React.FunctionComponent<AccountPageProps> = () => {
                     marginRight: "50px",
                     borderRadius: "50px",
                     width: "200px",
+                  }}
+                  onClick={() => {
+                    signOut(auth);
+                    navigate("/login");
                   }}
                 >
                   Logout
