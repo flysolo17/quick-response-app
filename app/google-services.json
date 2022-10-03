@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "553163939988",
+    "project_id": "calvin-project-f40c8",
+    "storage_bucket": "calvin-project-f40c8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:553163939988:android:c5e61f2f3bbc92f41c9481",
+        "android_client_info": {
+          "package_name": "com.jmballangca.quickresponsebarcode"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "553163939988-p3nb7gv4lk2vh4meqvgmfaa9eg3uasn8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtUZ-NLnaUwOs44vJ1iW9ssWOx36dpyvI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "553163939988-p3nb7gv4lk2vh4meqvgmfaa9eg3uasn8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
