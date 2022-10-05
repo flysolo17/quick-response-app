@@ -26,32 +26,28 @@ const AuthProvider: React.FunctionComponent<AuthProviderProps> = (props) => {
   const [user, setUser] = useState<Users | null>(null);
   const [loading, setLoading] = useState(true);
   const [type, setType] = useState("");
-  async function checkUser(params: User) {
-    const docRef = doc(firestore, "Users", params.uid).withConverter(
-      userConverter
-    );
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      const users = docSnap.data();
-      setUser(users);
-      setType(users.type);
+  async function checkUser(params: User | null) {
+    if (params != null) {
+      const docRef = doc(firestore, "Users", params.uid).withConverter(
+        userConverter
+      );
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const users = docSnap.data();
+        setUser(users);
+        setType(users.type);
+      }
     }
     setLoading(false);
     setCurrentuser(params);
   }
-  
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((users) => {
-      if (user != null) {
-        checkUser(users!);
-      } else {
-        setLoading(false);
-        setCurrentuser(users);
-      }
+      checkUser(users);
     });
     return unsubscribe;
   }, []);
-
 
   const value = {
     currentUser: currentUser,
