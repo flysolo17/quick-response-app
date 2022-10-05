@@ -39,12 +39,20 @@ const AuthProvider: React.FunctionComponent<AuthProviderProps> = (props) => {
     setLoading(false);
     setCurrentuser(params);
   }
+  
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((users) => {
-      checkUser(users!);
+      if (user != null) {
+        checkUser(users!);
+      } else {
+        setLoading(false);
+        setCurrentuser(users);
+      }
     });
     return unsubscribe;
   }, []);
+
+
   const value = {
     currentUser: currentUser,
     type: type,
