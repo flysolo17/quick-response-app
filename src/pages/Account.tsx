@@ -1,6 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { Box, Stack, Grid, Button } from "@mui/material";
+import {
+  Box,
+  Stack,
+  Grid,
+  Button,
+  Container,
+  CircularProgress,
+  Avatar,
+  Typography,
+} from "@mui/material";
 import logo from "../image/logo.png";
 import { signOut } from "firebase/auth";
 import { auth } from "../config/config";
@@ -8,6 +17,9 @@ import { useNavigate } from "react-router-dom";
 import { useQRCode } from "next-qrcode";
 import { useAuth } from "../context/AuthContext";
 import { firestore } from "../config/config";
+import EditProfilePage from "./EditProfile";
+import { userConverter, Users } from "../model/Users";
+import { doc, getDoc } from "firebase/firestore";
 interface AccountPageProps {}
 
 const AccountPage: React.FunctionComponent<AccountPageProps> = (props) => {
@@ -18,168 +30,134 @@ const AccountPage: React.FunctionComponent<AccountPageProps> = (props) => {
       },
     },
   });
-  const { users, currentUser } = useAuth();
+  const { currentUser } = useAuth();
   const { Canvas } = useQRCode();
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState<Users | null>(null);
+  function getAccountInfo(uid: string) {
+    const ref = doc(firestore, "Users", uid).withConverter(userConverter);
+    getDoc(ref)
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          let data = snapshot.data();
+          setUsers(data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+  useEffect(() => {
+    if (currentUser != null) {
+      getAccountInfo(currentUser.uid);
+    }
+  }, []);
+  if (loading)
+    return (
+      <Container
+        sx={{
+          width: "100%",
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress />
+      </Container>
+    );
   return (
-    <div>
-      <ThemeProvider theme={theme}>
-        <Grid
-          container
-          spacing={2}
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Box
+        sx={{
+          width: 1080,
+          height: 800,
+          borderRadius: 10,
+          backgroundColor: "#B1BCE9",
+        }}
+      >
+        <Stack
           direction={"column"}
-          justifyContent="center"
-          alignContent={"center"}
-          style={{ minHeight: "95vh" }}
+          spacing={2}
+          sx={{
+            width: "100%",
+            padding: 2,
+            display: "flex",
+            height: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
-          <Box
+          <Avatar
+            sx={{ width: 200, height: 200 }}
+            variant="rounded"
+            src={users?.schoolProfile}
+          >
+            No School Logo
+          </Avatar>
+          <Typography
             sx={{
-              width: 800,
-              height: "75vh",
-              padding: 5,
-              borderRadius: 10,
-              boxShadow: 2,
-              backgroundColor: "#111928",
+              fontFamily: "Poppins",
+              fontWeight: 700,
+              fontStyle: "bold",
+              fontSize: 40,
             }}
           >
-            <Stack>
-              <Box
-                style={{
-                  display: "flex",
-                  fontSize: "18px",
-                  fontWeight: "bold",
-                  color: "#ffff",
-                }}
-              >
-                <label
-                  className="accounts"
-                  style={{
-                    marginLeft: "auto",
-                    marginRight: "auto",
-                    fontSize: "40px",
-                    fontWeight: "bolder",
-                  }}
-                >
-                  <b>Account Details</b>
-                </label>
-              </Box>
-              <Box
-                style={{
-                  marginTop: "15px",
-                  display: "flex",
-                  fontSize: "18px",
-                  fontWeight: "bold",
-                  color: "#ffff",
-                }}
-              >
-                <Canvas
-                  text={currentUser?.uid!}
-                  options={{
-                    type: "image/jpeg",
-                    quality: 0.3,
-                    level: "M",
-                    margin: 3,
-                    scale: 4,
-                    width: 150,
-                  }}
-                />
-                <span
-                  style={{
-                    marginTop: "auto",
-                    marginBottom: "auto",
-                    marginLeft: "15px",
-                    cursor: "pointer",
-                  }}
-                >
-                  <Button> as</Button>
-                </span>
-              </Box>
-              <Box
-                style={{
-                  display: "inline-flex",
-                  justifyContent: "center",
-                  marginTop: "10px",
-                  padding: "5px",
-                  color: "#ffff",
-                }}
-              >
-                <label style={{ paddingLeft: "0px" }}>Firstname</label>
-                <label style={{ margin: "auto" }}>Middlename</label>
-                <label style={{ paddingRight: "0px" }}>Lastname</label>
-              </Box>
-              <Stack
-                sx={{ display: "flex", justifyContent: "space-between" }}
-                direction={"row"}
-              >
-                <label className="account_input">{users?.firstName}</label>
-                <label className="account_input">{users?.middleName}</label>
-                <label className="account_input">{users?.lastName}</label>
-              </Stack>
+            {users?.schoolName}
+          </Typography>
+          <Typography
+            sx={{
+              fontFamily: "Poppins",
+              fontWeight: 700,
+              fontStyle: "normal",
+              fontSize: 20,
+              color: "text.secondary",
+            }}
+          >
+            Manage by
+          </Typography>
+          <Typography
+            sx={{
+              fontFamily: "Poppins",
+              fontWeight: 700,
+              fontStyle: "bold",
+              fontSize: 26,
+            }}
+          >
+            {users?.firstName} {users?.middleName} {users?.lastName}
+          </Typography>
 
-              <Box
-                style={{
-                  display: "inline-flex",
-                  justifyContent: "center",
-                  marginTop: "10px",
-                  padding: "5px",
-                  color: "#ffff",
-                }}
-              >
-                <label style={{ paddingLeft: "0px" }}>Account</label>
-                <label style={{ margin: "auto" }}> Email </label>
-                <label style={{ paddingRight: "0px" }}>ID Number</label>
-              </Box>
-              <Stack
-                sx={{ display: "flex", justifyContent: "space-between" }}
-                direction={"row"}
-              >
-                <label className="account_input">{users?.type}</label>
-                <label className="account_input">{users?.email}</label>
-                <label className="account_input">{users?.idNumber}</label>
-              </Stack>
-              <Box
-                style={{
-                  display: "flex",
-                  marginTop: "50px",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Button
-                  variant="contained"
-                  color="success"
-                  style={{
-                    marginLeft: "50px",
-                    marginRight: "50px",
-                    borderRadius: "50px",
-                    width: "200px",
-                  }}
-                >
-                  Edit Profile
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  style={{
-                    marginLeft: "50px",
-                    marginRight: "50px",
-                    borderRadius: "50px",
-                    width: "200px",
-                  }}
-                  onClick={() => {
-                    signOut(auth);
-                    navigate("/login");
-                  }}
-                >
-                  Logout
-                </Button>
-              </Box>
-            </Stack>
-          </Box>
-        </Grid>
-      </ThemeProvider>
-    </div>
+          <Button
+            variant="contained"
+            color="error"
+            style={{
+              marginLeft: "50px",
+              marginRight: "50px",
+              borderRadius: "50px",
+              width: "200px",
+            }}
+            onClick={() => {
+              signOut(auth);
+              navigate("/login");
+            }}
+          >
+            Logout
+          </Button>
+        </Stack>
+      </Box>
+    </Box>
   );
 };
 

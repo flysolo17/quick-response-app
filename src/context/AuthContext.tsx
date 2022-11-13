@@ -6,8 +6,6 @@ import { userConverter, Users } from "../model/Users";
 import { doc, getDoc } from "firebase/firestore";
 interface IAuthContextProps {
   currentUser: User | null;
-  type: string;
-  users: Users | null;
 }
 
 const AuthContext = createContext<IAuthContextProps>({} as IAuthContextProps);
@@ -23,43 +21,22 @@ interface AuthProviderProps {
 const AuthProvider: React.FunctionComponent<AuthProviderProps> = (props) => {
   const { children } = props;
   const [currentUser, setCurrentuser] = useState<User | null>(null);
-  const [user, setUser] = useState<Users | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [type, setType] = useState("");
-  async function checkUser(params: User | null) {
-    if (params != null) {
-      const docRef = doc(firestore, "Users", params.uid).withConverter(
-        userConverter
-      );
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const users = docSnap.data();
-        setUser(users);
-        setType(users.type);
-      }
-    }
-    setLoading(false);
-    setCurrentuser(params);
-  }
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((users) => {
-      checkUser(users);
+      setCurrentuser(users);
     });
     return unsubscribe;
   }, []);
 
   const value = {
     currentUser: currentUser,
-    type: type,
-    users: user,
   };
   if (loading) return <CircularProgress />;
   return (
     <>
-      <AuthContext.Provider value={value}>
-        {!loading && children}
-      </AuthContext.Provider>
+      <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
     </>
   );
 };

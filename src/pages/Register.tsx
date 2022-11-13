@@ -13,24 +13,30 @@ import {
   Radio,
   Container,
   ThemeProvider,
+  Typography,
+  Avatar,
 } from "@mui/material";
 import React, { useState, useRef } from "react";
 import { createTheme, styled } from "@mui/material/styles";
 import "../styles/auth.css";
 import { grey } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
-import { firestore, auth } from "../config/config";
+import { firestore, auth, storage } from "../config/config";
 import { setDoc, doc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { flattenDiagnosticMessageText } from "typescript";
+import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import { Users } from "../model/Users";
+import { colorPrimary, PROFILE_PATH } from "../utils/Constants";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { v4 as uuidV4 } from "uuid";
 interface RegisterPageProps {}
 interface IRegister {
   firstName: string;
   middleName: string;
   lastName: string;
-  idNumber: string;
-  type: string;
+  schoolName: string;
+  schoolProfile: string;
   email: string;
   password: string;
   loading: boolean;
@@ -44,8 +50,8 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
     firstName: "",
     middleName: "",
     lastName: "",
-    idNumber: "",
-    type: "Teacher",
+    schoolName: "",
+    schoolProfile: "",
     email: "",
     password: "",
     loading: false,
@@ -57,6 +63,17 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
   const timer = useRef<number>();
 
   const navigate = useNavigate();
+  const [forUpload, setForUpload] = useState("");
+  const onImageChange = (event: any) => {
+    setForUpload(event.target.files[0]);
+    if (event.target.files && event.target.files[0]) {
+      let reader = new FileReader();
+      reader.onload = (e: any) => {
+        isetState({ ...istate, schoolProfile: e.target.result });
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
+  };
   const handleButtonClick = () => {
     if (!istate.loading) {
       isetState({ ...istate, loading: true });
@@ -67,6 +84,22 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
       }, 2000);
     }
   };
+  function uploadFile(file: any, users: Users) {
+    isetState({ ...istate, loading: true });
+    if (file == null) return;
+    const fileref = ref(storage, `${PROFILE_PATH}/${uuidV4()}`);
+    uploadBytes(fileref, file)
+      .then((snapshot) => {
+        getDownloadURL(snapshot.ref).then((url) => {
+          users.schoolProfile = url;
+          saveUser(users);
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => isetState({ ...istate, loading: false }));
+  }
 
   async function signUp() {
     isetState({ ...istate, loading: true });
@@ -78,11 +111,11 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
           firstName: istate.firstName,
           middleName: istate.middleName,
           lastName: istate.lastName,
-          idNumber: istate.idNumber,
-          type: istate.type,
+          schoolName: istate.schoolName,
+          schoolProfile: istate.schoolProfile,
           email: istate.email,
         };
-        saveUser(newUser);
+        withImageOrNo(newUser);
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -108,6 +141,7 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
           meesage: "Successfull created",
         },
       });
+      navigate("/");
     } catch (error) {
       console.error("Error adding document: ", error);
       isetState({
@@ -120,6 +154,13 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
       });
     }
   }
+  const withImageOrNo = (users: Users) => {
+    if (forUpload != "") {
+      uploadFile(forUpload, users);
+    } else {
+      saveUser(users);
+    }
+  };
   const ColorButton = styled(Button)(({ theme }) => ({
     color: theme.palette.getContrastText(grey[900]),
     borderRadius: 10,
@@ -150,7 +191,7 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
           >
             <Box
               sx={{
-                width: 750,
+                width: 900,
                 height: "80vh",
                 padding: 5,
                 borderRadius: 10,
@@ -165,6 +206,61 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
                 <p style={{ marginTop: "0px" }}>
                   This is your first step with us!
                 </p>
+                <Typography
+                  sx={{
+                    color: "black",
+                    fontFamily: "Poppins",
+                    fontSize: 20,
+                    fontWeight: 700,
+                    fontStyle: "normal",
+                  }}
+                >
+                  School Info
+                </Typography>
+
+                <Stack direction={"row"} spacing={2}>
+                  <Stack direction={"column"}>
+                    <Avatar
+                      sx={{ bgcolor: colorPrimary, width: 200, height: 200 }}
+                      src={istate.schoolProfile}
+                      variant="square"
+                    >
+                      No School logo
+                    </Avatar>
+                    <Button variant="contained" component="label">
+                      Add School Logo
+                      <input
+                        hidden
+                        accept="image/*"
+                        multiple
+                        type="file"
+                        onChange={onImageChange}
+                      />
+                    </Button>
+                  </Stack>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    label="School Name"
+                    value={istate.schoolName}
+                    onChange={(e) =>
+                      isetState({ ...istate, schoolName: e.target.value })
+                    }
+                    style={{ margin: "2.5px" }}
+                  />
+                </Stack>
+
+                <Typography
+                  sx={{
+                    color: "black",
+                    fontFamily: "Poppins",
+                    fontSize: 20,
+                    fontWeight: 700,
+                    fontStyle: "normal",
+                  }}
+                >
+                  Admin Info
+                </Typography>
                 <Stack>
                   <FormControl>
                     <Box
@@ -174,6 +270,7 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
                       <TextField
                         variant="outlined"
                         label="Firstname"
+                        fullWidth
                         value={istate.firstName}
                         onChange={(e) =>
                           isetState({ ...istate, firstName: e.target.value })
@@ -225,17 +322,6 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
                       <TextField
                         fullWidth
                         variant="outlined"
-                        label="ID number"
-                        value={istate.idNumber}
-                        onChange={(e) =>
-                          isetState({ ...istate, idNumber: e.target.value })
-                        }
-                        type={"number"}
-                        style={{ margin: "2.5px" }}
-                      />
-                      <TextField
-                        fullWidth
-                        variant="outlined"
                         label="Password"
                         type={"password"}
                         value={istate.password}
@@ -248,33 +334,6 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
                   </FormControl>
                 </Stack>
                 <Stack>
-                  <FormControl>
-                    <FormLabel id="demo-controlled-radio-buttons-group">
-                      Account Type
-                    </FormLabel>
-                    <RadioGroup
-                      row
-                      defaultValue="Teacher"
-                      aria-labelledby="demo--controlled-radio-buttons-group"
-                      name="controlled-radio-buttons-group"
-                      value={istate.type}
-                      onChange={(e) =>
-                        isetState({ ...istate, type: e.target.value })
-                      }
-                    >
-                      <FormControlLabel
-                        value="Student"
-                        control={<Radio />}
-                        label="Student"
-                      />
-                      <FormControlLabel
-                        value="Teacher"
-                        control={<Radio />}
-                        label="Teacher"
-                      />
-                    </RadioGroup>
-                  </FormControl>
-
                   <Box
                     sx={{
                       display: "flex",

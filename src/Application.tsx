@@ -6,9 +6,9 @@ import RegisterPage from "./pages/Register";
 import NotFoundPage from "./pages/NotFound";
 import DashBoardPage from "./pages/DashBoard";
 import AccountPage from "./pages/Account";
-import AboutPage from "./pages/About";
 import "./App.css";
 import AuthProvider from "./context/AuthContext";
+import EditProfilePage from "./pages/EditProfile";
 interface ApplictionProps {}
 
 const Appliction: React.FunctionComponent<ApplictionProps> = (props) => {
@@ -32,14 +32,7 @@ const Appliction: React.FunctionComponent<ApplictionProps> = (props) => {
               </AuthRoute>
             }
           />
-          <Route
-            path="/about"
-            element={
-              <AuthRoute>
-                <AboutPage />
-              </AuthRoute>
-            }
-          />
+
           <Route
             path="*"
             element={

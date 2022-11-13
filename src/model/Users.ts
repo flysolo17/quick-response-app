@@ -5,8 +5,8 @@ export interface Users {
   firstName: string;
   middleName: string;
   lastName: string;
-  idNumber: string;
-  type: string;
+  schoolName: string;
+  schoolProfile: string;
   email: string;
 }
 export const userConverter = {

@@ -17,7 +17,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, firestore } from "../config/config";
 import { userConverter } from "../model/Users";
-
+import LoginPic from "../image/login.png";
 interface ILoginPageProps {}
 interface IState {
   email: string;
@@ -63,8 +63,9 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (props) => {
     await signInWithEmailAndPassword(auth, istate.email, istate.password)
       .then((userCredential) => {
         const user = userCredential.user;
-        identifyUser(user.uid);
-        console.log(istate.password);
+        if (user != null) {
+          navigate("/");
+        }
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -79,20 +80,6 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (props) => {
     });
   }
 
-  async function identifyUser(userId: string) {
-    const docRef = doc(firestore, "Users", userId).withConverter(userConverter);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      const user = docSnap.data();
-      if (user.type === "Teacher") {
-        navigate("/");
-      } else if (user.type === "Student") {
-        navigate("/student");
-      }
-    } else {
-      navigate("/*");
-    }
-  }
   if (istate.events.loading)
     return (
       <div className="login-body">
@@ -210,7 +197,7 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (props) => {
                       alignItems: "center",
                     }}
                   >
-                    <img src={"images/teaching.svg"} alt="teaching" />
+                    <img src={LoginPic} alt="teaching" />
                     <h6
                       style={{
                         width: "180px",

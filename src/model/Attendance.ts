@@ -1,12 +1,9 @@
-import { QueryDocumentSnapshot, serverTimestamp } from "firebase/firestore";
-import { Attendees } from "./Attendees";
-import { Users } from "./Users";
+import { QueryDocumentSnapshot } from "firebase/firestore";
 
 export interface Attendance {
-  subjectID: string;
-  teacher: string;
-  attendees: Attendees[];
-  createdAt: Date;
+  studentID: string;
+  inSchool: false;
+  timestamp: number;
 }
 
 export const subjectConverter = {

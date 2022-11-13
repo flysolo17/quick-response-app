@@ -13,9 +13,4 @@ export const navData = [
     path: "/account",
     icon: <AccountCircleIcon />,
   },
-  {
-    title: "About",
-    path: "/about",
-    icon: <InfoIcon />,
-  },
 ];
