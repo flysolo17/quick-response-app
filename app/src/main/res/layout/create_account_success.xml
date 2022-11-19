@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:padding="10dp"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:layout_height="wrap_content"
+   >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Account"
+        android:layout_margin="5dp"
+        android:fontFamily="@font/poppins"
+        android:textSize="24sp"
+        android:textColor="@color/black"/>
+    <ImageView
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+
+        android:id="@+id/imageQr"/>
+    <TextView
+        android:id="@+id/textFullname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Full name"
+        android:layout_margin="5dp"
+        android:fontFamily="@font/poppins"
+        android:textSize="18sp"
+        android:textColor="@color/black"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ID number"
+        android:id="@+id/textID"
+        android:fontFamily="@font/poppins"
+        android:textSize="14sp"
+        android:textColor="@color/black"/>
+
+</LinearLayout>

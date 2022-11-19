@@ -5,7 +5,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.jmballangca.quickresponsebarcode.actrivities.DashBoardActivity
 import com.jmballangca.quickresponsebarcode.databinding.ActivityMainBinding
 import com.jmballangca.quickresponsebarcode.model.Attendance
 import com.journeyapps.barcodescanner.ScanContract
@@ -22,11 +25,12 @@ class MainActivity : AppCompatActivity() {
 
     // Register the launcher and result handler
     private lateinit var barcodeLauncher : ActivityResultLauncher<ScanOptions>
-
+    private lateinit var auth : FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        auth = FirebaseAuth.getInstance()
         barcodeLauncher = registerForActivityResult(
             ScanContract()
         ) { result: ScanIntentResult ->
@@ -38,46 +42,45 @@ class MainActivity : AppCompatActivity() {
                     "Scanned: " + result.contents,
                     Toast.LENGTH_LONG
                 ).show()
-                binding.attendanceCode.editText?.setText(result.contents)
-
             }
         }
         firestore = FirebaseFirestore.getInstance()
-        binding.button.setOnClickListener {
-            val input = binding.attendanceCode.editText?.text.toString()
-            if (input.isEmpty()) {
-                binding.attendanceCode.error = "enter code"
-            } else {
-                getAttendanceCode(input)
+        binding.buttonLogin.setOnClickListener {
+            val email = binding.inputEmail.editText?.text.toString()
+            val password = binding.inputPassword.editText?.text.toString()
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this,"Invalid email/password",Toast.LENGTH_LONG).show()
+                return@setOnClickListener
             }
-
+            loginFunc(email, password)
         }
-        binding.buttonScan.setOnClickListener{
-            val options = ScanOptions()
-            options.setDesiredBarcodeFormats(ScanOptions.QR_CODE)
-            options.setPrompt("Quick Response Attendance QR Code")
-            options.setCameraId(0) // Use a specific camera of the device
-            options.setBeepEnabled(false)
 
-            options.setBarcodeImageEnabled(true)
-            barcodeLauncher.launch(options)
+
+    }
+    private fun loginFunc(email : String,password : String) {
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Toast.makeText(this,"Success",Toast.LENGTH_LONG).show()
+                val currentUser = task.result.user
+                updateUI(currentUser)
+            } else {
+                Toast.makeText(this,"Failed",Toast.LENGTH_LONG).show()
+            }
+        }.addOnFailureListener {
+            Toast.makeText(this,it.message,Toast.LENGTH_LONG).show()
         }
     }
-    private fun getAttendanceCode(code : String) {
-        firestore.collection("Attendance")
-            .document(code)
-            .get()
-            .addOnSuccessListener {
-                if (it.exists()) {
-                    val attendance = it.toObject(Attendance::class.java)
-                    if (attendance != null) {
-                        startActivity(Intent(this,AttendanceScanner::class.java).putExtra("id",it.id))
-                    }
 
-                } else {
-                    Toast.makeText(this,"Attendance does not exists!",Toast.LENGTH_LONG).show()
-                }
-            }
+    private fun updateUI(currentUser : FirebaseUser?) {
+        if (currentUser != null) {
+            startActivity(Intent(this, DashBoardActivity::class.java).putExtra("uid",currentUser.uid))
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val currentUser: FirebaseUser? = auth.currentUser
+        updateUI(currentUser)
     }
 
 }
