@@ -159,8 +159,7 @@ class DashBoardActivity : AppCompatActivity() {
                     val user : Users = it.toObject(Users::class.java)!!
                     binding.textSchoolName.text = user.schoolName
                     if (user.schoolProfile!!.isNotEmpty()) {
-                        Glide
-                            .with(this)
+                        Glide.with(this)
                             .load(user.schoolProfile)
                             .centerCrop()
                             .into(binding.imageSchoolLogo)
@@ -190,7 +189,9 @@ class DashBoardActivity : AppCompatActivity() {
         val data = mutableListOf<Attendance>()
         listAttendance.map { attendance ->
             if (attendance.studentID.equals(studentID)) {
-               data.add(attendance)
+                if (attendance.timestamp!! < startOfDay(System.currentTimeMillis()) && attendance.timestamp > endOfDay(System.currentTimeMillis())) {
+                    data.add(attendance)
+                }
             }
         }
         return data.size % 2 == 0
