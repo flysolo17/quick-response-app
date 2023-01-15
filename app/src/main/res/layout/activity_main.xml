@@ -13,9 +13,7 @@
         android:layout_width="220dp"
         android:layout_height="220dp"
         android:layout_marginTop="60dp"
-
-        app:srcCompat="@drawable/ic_group_18" />
-
+        app:srcCompat="@drawable/mindoro_logo" />
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
@@ -25,21 +23,17 @@
         android:text="@string/quick_response"
         android:textColor="@color/black"
         android:textSize="28sp" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:padding="10dp"
         android:layout_height="match_parent">
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputEmail"
             style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
             android:layout_width="match_parent"
             app:errorEnabled="true"
-
             android:layout_height="wrap_content">
-
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,12 +58,8 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:id="@+id/buttonLogin"
-android:text="@string/login"
+            android:text="@string/login"
             app:cornerRadius="20dp">
-
         </com.google.android.material.button.MaterialButton>
-
     </LinearLayout>
-
-
 </LinearLayout>

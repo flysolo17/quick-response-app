@@ -59,6 +59,7 @@ class DashBoardActivity : AppCompatActivity() {
                 if (id != null) {
                     if (checkIfStudentIsExists(result.contents)) {
                         showDialog(id)
+                        Toast.makeText(binding.root.context,checkIfStudentIsExists(result.contents).toString(),Toast.LENGTH_SHORT).show()
                         return@registerForActivityResult
                     }
                     takeAttendance(id,result.contents)
@@ -144,7 +145,6 @@ class DashBoardActivity : AppCompatActivity() {
 
     }
     private fun navigateToStudentProfile(uid: String,students: Students) {
-
         val intent = Intent(this,StudentProfileActivity::class.java)
         intent.putExtra("uid",uid)
         intent.putExtra("student",students)
@@ -158,12 +158,6 @@ class DashBoardActivity : AppCompatActivity() {
                 if (it.exists()) {
                     val user : Users = it.toObject(Users::class.java)!!
                     binding.textSchoolName.text = user.schoolName
-                    if (user.schoolProfile!!.isNotEmpty()) {
-                        Glide.with(this)
-                            .load(user.schoolProfile)
-                            .centerCrop()
-                            .into(binding.imageSchoolLogo)
-                    }
                 }
             }
     }
@@ -171,6 +165,7 @@ class DashBoardActivity : AppCompatActivity() {
         startActivity(Intent(this,CreateAccountActivity::class.java).putExtra("uid",uid))
     }
     private fun takeAttendance(uid: String,studentID : String) {
+
         firestore.collection("Users").document(uid).collection("Attendance").add(
             Attendance(
                 studentID,
@@ -186,14 +181,7 @@ class DashBoardActivity : AppCompatActivity() {
         }
     }
     private fun checkIfInSchool(studentID: String) : Boolean {
-        val data = mutableListOf<Attendance>()
-        listAttendance.map { attendance ->
-            if (attendance.studentID.equals(studentID)) {
-                if (attendance.timestamp!! < startOfDay(System.currentTimeMillis()) && attendance.timestamp > endOfDay(System.currentTimeMillis())) {
-                    data.add(attendance)
-                }
-            }
-        }
+        val data = listAttendance.filter { it.studentID == studentID && it.timestamp!! > startOfDay(System.currentTimeMillis()) && it.timestamp < endOfDay(System.currentTimeMillis()) }
         return data.size % 2 == 0
     }
     private fun getAttendance(uid : String) {
