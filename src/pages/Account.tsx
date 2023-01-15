@@ -76,6 +76,7 @@ const AccountPage: React.FunctionComponent<AccountPageProps> = (props) => {
         width: "100%",
         height: "100%",
         display: "flex",
+        margin: "10px",
         alignItems: "center",
         justifyContent: "center",
       }}
@@ -83,9 +84,10 @@ const AccountPage: React.FunctionComponent<AccountPageProps> = (props) => {
       <Box
         sx={{
           width: 1080,
-          height: 800,
+          height: "80%",
           borderRadius: 10,
-          backgroundColor: "#B1BCE9",
+          backgroundColor: "#0000008a",
+          color: "white",
         }}
       >
         <Stack
@@ -95,6 +97,7 @@ const AccountPage: React.FunctionComponent<AccountPageProps> = (props) => {
             width: "100%",
             padding: 2,
             display: "flex",
+            color: "white",
             height: "100%",
             alignItems: "center",
             justifyContent: "center",
@@ -123,7 +126,7 @@ const AccountPage: React.FunctionComponent<AccountPageProps> = (props) => {
               fontWeight: 700,
               fontStyle: "normal",
               fontSize: 20,
-              color: "text.secondary",
+              color: "whitesmoke",
             }}
           >
             Manage by

@@ -192,7 +192,7 @@ const RegisterPage: React.FunctionComponent<RegisterPageProps> = () => {
             <Box
               sx={{
                 width: 900,
-                height: "80vh",
+                height: 900,
                 padding: 5,
                 borderRadius: 10,
                 backgroundColor: "#ffff",

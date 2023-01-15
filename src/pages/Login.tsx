@@ -18,6 +18,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { auth, firestore } from "../config/config";
 import { userConverter } from "../model/Users";
 import LoginPic from "../image/login.png";
+import ForgotPassword from "../component/ForgotPassword";
 interface ILoginPageProps {}
 interface IState {
   email: string;
@@ -134,7 +135,7 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (props) => {
                       type={"password"}
                     />
                     <Stack style={{ marginLeft: "auto" }}>
-                      <Button>Forgot Password</Button>
+                      <ForgotPassword />
                     </Stack>
                     <ColorButton
                       variant="contained"

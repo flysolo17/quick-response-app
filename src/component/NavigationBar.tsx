@@ -15,6 +15,7 @@ import { navData } from "./NavData";
 import { useNavigate } from "react-router-dom";
 import logo from "../image/logo.png";
 import { Stack } from "@mui/material";
+import SCHOOL from "../image/school.jpg";
 const drawerWidth = 240;
 interface INavigationProps {
   children: any;
@@ -79,7 +80,13 @@ const NavigationBar: React.FunctionComponent<INavigationProps> = (props) => {
       </Drawer>
       <Box
         component="main"
-        sx={{ flexGrow: 1, height: "100vh", backgroundColor: "#101828" }}
+        sx={{
+          flexGrow: 1,
+          height: "100vh",
+          backgroundImage: `url(${SCHOOL})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+        }}
       >
         {children}
       </Box>

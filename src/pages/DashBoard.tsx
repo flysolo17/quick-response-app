@@ -29,6 +29,7 @@ import TextField from "@mui/material/TextField";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
+
 interface DashBoardPageProps {}
 
 const DashBoardPage: React.FunctionComponent<DashBoardPageProps> = () => {
@@ -142,6 +143,7 @@ const DashBoardPage: React.FunctionComponent<DashBoardPageProps> = () => {
           width: "100%",
           height: "100vh",
           display: "flex",
+
           alignItems: "center",
           justifyContent: "center",
         }}
@@ -154,7 +156,9 @@ const DashBoardPage: React.FunctionComponent<DashBoardPageProps> = () => {
       sx={{
         width: "100%",
         height: "100%",
+ 
         padding: 2,
+        backgroundColor: "#0000008a",
       }}
       direction={"column"}
     >
@@ -174,7 +178,7 @@ const DashBoardPage: React.FunctionComponent<DashBoardPageProps> = () => {
           sx={{
             color: "white",
             fontFamily: "Poppins",
-            fontWeight: 400,
+            fontWeight: 800,
             fontSize: 20,
             fontStyle: "normal",
           }}

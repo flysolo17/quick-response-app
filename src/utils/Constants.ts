@@ -11,7 +11,6 @@ export const grey50 = "#F9FAFB";
 export const grey100 = "#F2F4F7";
 export const grey300 = "#D9D9D9";
 export const purple = "#C7C6FA";
-
 export const PROFILE_PATH = "images";
 export function formatTimestamp(time: number): string {
   return new Date(time).toLocaleString();
