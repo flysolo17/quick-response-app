@@ -50,6 +50,13 @@ const DashBoardPage: React.FunctionComponent<DashBoardPageProps> = () => {
   const handleChange = (newValue: Dayjs | null) => {
     setValue(newValue);
   };
+
+  const [valueEnd, setValueEnd] = React.useState<Dayjs | null>(
+    dayjs(new Date())
+  );
+  const handleChangeEnd = (newValue: Dayjs | null) => {
+    setValueEnd(newValue);
+  };
   useEffect(() => {
     if (currentUser !== null) {
       const ref = collection(
@@ -61,7 +68,7 @@ const DashBoardPage: React.FunctionComponent<DashBoardPageProps> = () => {
       const q = query(
         ref,
         where("timestamp", ">=", value!.startOf("day").toDate().getTime()),
-        where("timestamp", "<=", value!.endOf("day").toDate().getTime()),
+        where("timestamp", "<=", valueEnd!.endOf("day").toDate().getTime()),
         orderBy("timestamp", "desc")
       );
       const unsub = onSnapshot(q, (snapshot) => {
@@ -105,7 +112,7 @@ const DashBoardPage: React.FunctionComponent<DashBoardPageProps> = () => {
       });
       return () => unsub();
     }
-  }, [value]);
+  }, [value, valueEnd]);
   useEffect(() => {
     if (currentUser !== null) {
       const ref = collection(firestore, "Users", currentUser.uid, "Students");
@@ -271,7 +278,7 @@ const DashBoardPage: React.FunctionComponent<DashBoardPageProps> = () => {
         <Box
           sx={{
             backgroundColor: "#B1BCE9",
-            width: "15%",
+            width: "35%",
 
             display: "flex",
             alignItems: "center",
@@ -288,6 +295,17 @@ const DashBoardPage: React.FunctionComponent<DashBoardPageProps> = () => {
               inputFormat="MM/DD/YYYY"
               value={value}
               onChange={handleChange}
+              renderInput={(params) => (
+                <TextField {...params} color={"success"} />
+              )}
+            />
+          </LocalizationProvider>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <MobileDatePicker
+              label="Pick end date"
+              inputFormat="MM/DD/YYYY"
+              value={valueEnd}
+              onChange={handleChangeEnd}
               renderInput={(params) => (
                 <TextField {...params} color={"success"} />
               )}

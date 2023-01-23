@@ -9,11 +9,7 @@ export const navData = [
     path: "/dashboard",
     icon: <HomeIcon />,
   },
-  {
-    title: "Daily Record",
-    path: "/daily",
-    icon: <DateRangeIcon />,
-  },
+
   {
     title: "Account",
     path: "/account",
