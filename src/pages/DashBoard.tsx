@@ -143,7 +143,6 @@ const DashBoardPage: React.FunctionComponent<DashBoardPageProps> = () => {
           width: "100%",
           height: "100vh",
           display: "flex",
-
           alignItems: "center",
           justifyContent: "center",
         }}
@@ -223,41 +222,7 @@ const DashBoardPage: React.FunctionComponent<DashBoardPageProps> = () => {
             Students
           </Typography>
         </Box>{" "}
-        <Box
-          sx={{
-            height: 150,
-            width: "100%",
-            backgroundColor: "#B1BCE9",
-            borderRadius: 5,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexDirection: "column",
-          }}
-        >
-          <Typography
-            sx={{
-              color: "black",
-              fontFamily: "Poppins",
-              fontWeight: 400,
-              fontSize: 35,
-              fontStyle: "bold",
-            }}
-          >
-            {countInSchool(attendance)}
-          </Typography>
-          <Typography
-            sx={{
-              color: "black",
-              fontFamily: "Poppins",
-              fontWeight: 400,
-              fontSize: 20,
-              fontStyle: "normal",
-            }}
-          >
-            In School
-          </Typography>
-        </Box>
+  
         <Box
           sx={{
             height: 150,

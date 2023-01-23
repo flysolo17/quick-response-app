@@ -13,7 +13,7 @@ export const grey300 = "#D9D9D9";
 export const purple = "#C7C6FA";
 export const PROFILE_PATH = "images";
 export function formatTimestamp(time: number): string {
-  return new Date(time).toLocaleString();
+  return new Date(time).toLocaleTimeString();
 }
 export function inOrOut(data: boolean): string {
   if (data) {
@@ -22,7 +22,7 @@ export function inOrOut(data: boolean): string {
   return "OUT";
 }
 export const getTimestamp = (): number => {
-  return new Date().getTime() / 1000;
+  return new Date().getTime();
 };
 
 export const countInSchool = (array: Attendance[]): number => {
@@ -40,28 +40,30 @@ export const countInSchool = (array: Attendance[]): number => {
   return arr.length;
 };
 
-export const countNotInSchool = (studentsCount : number,inSchoolCount : number) : number => { 
-  return studentsCount - inSchoolCount
-}
+export const countNotInSchool = (
+  studentsCount: number,
+  inSchoolCount: number
+): number => {
+  return studentsCount - inSchoolCount;
+};
 
 export const count = (array: Attendance[], studentID: string): number => {
   return array.filter((data) => data.studentID === studentID).length;
 };
 
-
-  //set the  time of the moment into (0-0-1)
-  export function startOfDay(moment : any) : number{
-    var date = moment.toDate();
-    date.setHours(0);
-    date.setMinutes(0);
-    date.setSeconds(1);
-    return date.getTime();
-  }
-  //set the time of the moment into (23-59-59)
-  export function endOfDay(moment: any): number {
-    var date = moment.toDate();
-    date.setHours(23);
-    date.setMinutes(59);
-    date.setSeconds(59);
-    return date.getTime();
-  }
+//set the  time of the moment into (0-0-1)
+export function startOfDay(moment: any): number {
+  var date = moment.toDate();
+  date.setHours(0);
+  date.setMinutes(0);
+  date.setSeconds(1);
+  return date.getTime();
+}
+//set the time of the moment into (23-59-59)
+export function endOfDay(moment: any): number {
+  var date = moment.toDate();
+  date.setHours(23);
+  date.setMinutes(59);
+  date.setSeconds(59);
+  return date.getTime();
+}
