@@ -8,7 +8,12 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
-import { formatTimestamp, getTimestamp, inOrOut } from "../utils/Constants";
+import {
+  formatTime,
+  formatTimestamp,
+  getTimestamp,
+  inOrOut,
+} from "../utils/Constants";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -47,7 +52,7 @@ const AttendanceTable: React.FunctionComponent<AttendanceTableProps> = (
         <TableHead>
           <TableRow>
             <StyledTableCell>Name</StyledTableCell>
-            <StyledTableCell align="right">ID number</StyledTableCell>
+            <StyledTableCell align="left">ID number</StyledTableCell>
             <StyledTableCell align="right">Time</StyledTableCell>
             <StyledTableCell align="right">IN / OUT</StyledTableCell>
           </TableRow>
@@ -60,9 +65,9 @@ const AttendanceTable: React.FunctionComponent<AttendanceTableProps> = (
                   {row.student.firstName} {row.student.middleName}{" "}
                   {row.student.lastName}
                 </StyledTableCell>
-                <StyledTableCell align="right">{row.studentID}</StyledTableCell>
+                <StyledTableCell align="left">{row.studentID}</StyledTableCell>
                 <StyledTableCell align="right">
-                  {formatTimestamp(row.timestamp)}
+                  {formatTime(row.timestamp)}
                 </StyledTableCell>
                 <StyledTableCell align="right">
                   {inOrOut(row.inSchool)}

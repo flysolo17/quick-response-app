@@ -1,109 +1,207 @@
-import * as React from "react";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
+import {
+  Box,
+  Stack,
+  Typography,
+  Container,
+  CircularProgress,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { firestore } from "../config/config";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
+import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+import { userConverter, Users } from "../model/Users";
+import AttendanceTable from "../component/AttendanceTable";
+import { studentConverter, Students } from "../model/Students";
+import { countInSchool, countNotInSchool } from "../utils/Constants";
+import TextField from "@mui/material/TextField";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs, { Dayjs } from "dayjs";
 import DailyReportTable from "../component/DailyReportTable";
 
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
 interface DailyRecordPageProps {}
 
 const DailyRecordPage: React.FunctionComponent<DailyRecordPageProps> = () => {
-  const [value, setValue] = React.useState(0);
-
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const [users, setUsers] = useState<Users | null>(null);
+  const [loading, setLoading] = useState(false);
+  const { currentUser } = useAuth();
+  const [studentCounter, setStudentCounter] = useState(0);
+  const [attendance, setAttendance] = useState<any[]>([]);
+  const [student, setStudent] = useState<Students>({
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    studentID: "",
+    pin: "",
+    createdAt: 0,
+  });
+  const [value, setValue] = React.useState<Dayjs | null>(dayjs(new Date()));
+  const handleChange = (newValue: Dayjs | null) => {
     setValue(newValue);
   };
-
+  const [valueEnd, setValueEnd] = React.useState<Dayjs | null>(
+    dayjs(new Date())
+  );
+  const handleChangeEnd = (newValue: Dayjs | null) => {
+    setValueEnd(newValue);
+  };
+  useEffect(() => {
+    if (currentUser !== null) {
+      const ref = collection(
+        firestore,
+        "Users",
+        currentUser!.uid,
+        "Attendance"
+      );
+      const q = query(
+        ref,
+        where("timestamp", ">=", value!.startOf("day").toDate().getTime()),
+        where("timestamp", "<=", valueEnd!.endOf("day").toDate().getTime()),
+        orderBy("timestamp", "desc")
+      );
+      const unsub = onSnapshot(q, (snapshot) => {
+        let data: any[] = [];
+        snapshot.forEach((document) => {
+          if (document !== undefined) {
+            const docRef = doc(
+              firestore,
+              "Users",
+              currentUser!.uid,
+              "Students",
+              document.data()["studentID"]
+            ).withConverter(studentConverter);
+            setLoading(true);
+            getDoc(docRef)
+              .then((snap) => {
+                if (snap.exists()) {
+                  data.push({
+                    ...document.data(),
+                    id: document.id,
+                    student: snap.data(),
+                  });
+                  console.log("done");
+                } else {
+                  data.push({
+                    ...document.data(),
+                    id: document.id,
+                    student: student,
+                  });
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              })
+              .finally(() => {
+                setLoading(false);
+              });
+          }
+        });
+        setAttendance(data);
+      });
+      return () => unsub();
+    }
+  }, [value]);
+  useEffect(() => {
+    if (currentUser !== null) {
+      const ref = collection(firestore, "Users", currentUser.uid, "Students");
+      getDocs(ref).then((snapshot) => {
+        let total_count: number = 0;
+        snapshot.forEach((doc) => {
+          if (snapshot != undefined) {
+            total_count += 1;
+            console.log(total_count);
+          }
+        });
+        setStudentCounter(total_count);
+      });
+    }
+  }, []);
+  useEffect(() => {
+    if (currentUser !== null) {
+      const ref = doc(firestore, "Users", currentUser!.uid).withConverter(
+        userConverter
+      );
+      const unsub = onSnapshot(ref, (snapshot) => {
+        if (snapshot.exists()) {
+          setUsers(snapshot.data());
+          console.log("user fetch");
+        }
+      });
+      return () => unsub();
+    }
+  }, []);
+  if (loading)
+    return (
+      <Container
+        sx={{
+          width: "100%",
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress />
+      </Container>
+    );
   return (
-    <Box sx={{ width: "100%" }}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="basic tabs example"
-        >
-          <Tab label="January" {...a11yProps(0)} />
-          <Tab label="February" {...a11yProps(1)} />
-          <Tab label="March" {...a11yProps(2)} />
-          <Tab label="April" {...a11yProps(3)} />
-          <Tab label="May" {...a11yProps(4)} />
-          <Tab label="June" {...a11yProps(5)} />
-          <Tab label="July" {...a11yProps(6)} />
-          <Tab label="August" {...a11yProps(7)} />
-          <Tab label="September" {...a11yProps(8)} />
-          <Tab label="October" {...a11yProps(9)} />
-          <Tab label="November" {...a11yProps(10)} />
-          <Tab label="December" {...a11yProps(11)} />
-        </Tabs>
-      </Box>
-      <TabPanel value={value} index={0}>
-        <DailyReportTable month={1} />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <DailyReportTable month={2} />
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        <DailyReportTable month={3} />
-      </TabPanel>
-      <TabPanel value={value} index={3}>
-        <DailyReportTable month={4} />
-      </TabPanel>
-      <TabPanel value={value} index={4}>
-        <DailyReportTable month={5} />
-      </TabPanel>
-      <TabPanel value={value} index={5}>
-        <DailyReportTable month={6} />
-      </TabPanel>
-      <TabPanel value={value} index={6}>
-        <DailyReportTable month={7} />
-      </TabPanel>
-      <TabPanel value={value} index={7}>
-        <DailyReportTable month={8} />
-      </TabPanel>
-      <TabPanel value={value} index={8}>
-        <DailyReportTable month={9} />
-      </TabPanel>
-      <TabPanel value={value} index={9}>
-        <DailyReportTable month={10} />
-      </TabPanel>
-      <TabPanel value={value} index={10}>
-        <DailyReportTable month={11} />
-      </TabPanel>
-      <TabPanel value={value} index={11}>
-        <DailyReportTable month={12} />
-      </TabPanel>
-    </Box>
+    <Stack
+      sx={{
+        padding: "1rem",
+        height: "100vh",
+        overflow: "hidden",
+        backgroundColor: "#0000008a",
+      }}
+      direction={"column"}
+      spacing={"10px"}
+    >
+      <Stack
+        sx={{
+          backgroundColor: "white",
+          width: "30%",
+          padding: "1rem",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: "10px",
+        }}
+        direction={"row"}
+        spacing={2}
+      >
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <MobileDatePicker
+            label="Pick start date"
+            inputFormat="MM/DD/YYYY"
+            value={value}
+            onChange={handleChange}
+            renderInput={(params) => (
+              <TextField {...params} color={"success"} />
+            )}
+          />
+        </LocalizationProvider>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <MobileDatePicker
+            label="Pick start date"
+            inputFormat="MM/DD/YYYY"
+            value={valueEnd}
+            onChange={handleChangeEnd}
+            renderInput={(params) => (
+              <TextField {...params} color={"success"} />
+            )}
+          />
+        </LocalizationProvider>
+      </Stack>
+      {<DailyReportTable attendance={attendance} />}
+    </Stack>
   );
 };
 

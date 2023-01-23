@@ -89,3 +89,6 @@ export function endOfMonth(month: number): number {
   date.setMonth(month - 1);
   return date.getTime();
 }
+export function formatTime(timestamp: number): string {
+  return new Date(timestamp).toLocaleTimeString();
+}

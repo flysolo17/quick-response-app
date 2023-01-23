@@ -33,7 +33,14 @@ const Appliction: React.FunctionComponent<ApplictionProps> = (props) => {
               </AuthRoute>
             }
           />
-
+          <Route
+            path="/daily"
+            element={
+              <AuthRoute>
+                <DailyRecordPage />
+              </AuthRoute>
+            }
+          />
 
           <Route
             path="*"

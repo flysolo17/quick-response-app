@@ -30,94 +30,21 @@ import {
 import Box from "@mui/material/Box";
 
 interface DailyReportTableProps {
-  month: number;
+  attendance: any[];
 }
 
 const DailyReportTable: React.FunctionComponent<DailyReportTableProps> = (
   props
 ) => {
-  const { month } = props;
-  const [loading, setLoading] = useState(false);
-  const { currentUser } = useAuth();
-  const [attendance, setAttendance] = useState<any[]>([]);
-  const [student, setStudent] = useState<Students>({
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    studentID: "",
-    pin: "",
-    createdAt: 0,
-  });
-  useEffect(() => {
-    console.log("start", new Date(startOfMonth(month)).toLocaleString());
-    console.log("end", new Date(endOfMonth(month)).toLocaleString());
-    if (currentUser !== null) {
-      const ref = collection(
-        firestore,
-        "Users",
-        currentUser!.uid,
-        "Attendance"
-      );
-      const q = query(
-        ref,
-        where("timestamp", ">=", startOfMonth(month)),
-        where("timestamp", "<=", endOfMonth(month)),
-        orderBy("timestamp", "desc")
-      );
-      const unsub = onSnapshot(q, (snapshot) => {
-        let data: any[] = [];
-        snapshot.forEach((document) => {
-          if (document !== undefined) {
-            const docRef = doc(
-              firestore,
-              "Users",
-              currentUser!.uid,
-              "Students",
-              document.data()["studentID"]
-            ).withConverter(studentConverter);
-            setLoading(true);
-            getDoc(docRef)
-              .then((snap) => {
-                if (snap.exists()) {
-                  data.push({
-                    ...document.data(),
-                    id: document.id,
-                    student: snap.data(),
-                  });
-                  console.log("done");
-                } else {
-                  data.push({
-                    ...document.data(),
-                    id: document.id,
-                    student: student,
-                  });
-                }
-              })
-              .catch((error) => {
-                console.log(error);
-              })
-              .finally(() => {
-                setLoading(false);
-              });
-          }
-        });
-        setAttendance(data);
-      });
-      return () => unsub();
-    }
-  }, []);
-  if (loading)
-    return (
-      <Box
-        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
-      >
-        <CircularProgress color="success" />
-      </Box>
-    );
+  const { attendance } = props;
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+      <Table
+        sx={{ width: "100%", maxHeight: "100vh" }}
+        size="small"
+        aria-label="a dense table"
+      >
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>

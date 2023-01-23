@@ -11,6 +11,12 @@ export const navData = [
   },
 
   {
+    title: "Daily Report",
+    path: "/daily",
+    icon: <DateRangeIcon />,
+  },
+
+  {
     title: "Account",
     path: "/account",
     icon: <AccountCircleIcon />,
