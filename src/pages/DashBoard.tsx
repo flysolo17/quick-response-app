@@ -155,7 +155,7 @@ const DashBoardPage: React.FunctionComponent<DashBoardPageProps> = () => {
       sx={{
         width: "100%",
         height: "100%",
- 
+
         padding: 2,
         backgroundColor: "#0000008a",
       }}
@@ -222,7 +222,6 @@ const DashBoardPage: React.FunctionComponent<DashBoardPageProps> = () => {
             Students
           </Typography>
         </Box>{" "}
-  
         <Box
           sx={{
             height: 150,
@@ -273,17 +272,19 @@ const DashBoardPage: React.FunctionComponent<DashBoardPageProps> = () => {
           sx={{
             backgroundColor: "#B1BCE9",
             width: "15%",
+
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             borderTopLeftRadius: 10,
             padding: 2,
+            gap: "10px",
             borderTopRightRadius: 10,
           }}
         >
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <MobileDatePicker
-              label="Pick a date"
+              label="Pick start date"
               inputFormat="MM/DD/YYYY"
               value={value}
               onChange={handleChange}

@@ -1,3 +1,4 @@
+import { monthsShort } from "moment";
 import { arrayBuffer } from "stream/consumers";
 import { Attendance } from "../model/Attendance";
 import { Students } from "../model/Students";
@@ -65,5 +66,26 @@ export function endOfDay(moment: any): number {
   date.setHours(23);
   date.setMinutes(59);
   date.setSeconds(59);
+  return date.getTime();
+}
+
+//set the  time of the moment into (0-0-1)
+export function startOfMonth(month: number): number {
+  var a = new Date();
+  var date = new Date(a.getFullYear(), a.getMonth(), 1);
+  date.setHours(0);
+  date.setMinutes(0);
+  date.setSeconds(1);
+  date.setMonth(month - 1);
+  return date.getTime();
+}
+//set the time of the moment into (23-59-59)
+export function endOfMonth(month: number): number {
+  var a = new Date();
+  var date = new Date(a.getFullYear(), a.getMonth() + 1, 0);
+  date.setHours(23);
+  date.setMinutes(59);
+  date.setSeconds(59);
+  date.setMonth(month - 1);
   return date.getTime();
 }

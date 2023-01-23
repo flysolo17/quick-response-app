@@ -9,6 +9,7 @@ import AccountPage from "./pages/Account";
 import "./App.css";
 import AuthProvider from "./context/AuthContext";
 import EditProfilePage from "./pages/EditProfile";
+import DailyRecordPage from "./pages/DailyRecord";
 interface ApplictionProps {}
 
 const Appliction: React.FunctionComponent<ApplictionProps> = (props) => {
@@ -29,6 +30,14 @@ const Appliction: React.FunctionComponent<ApplictionProps> = (props) => {
             element={
               <AuthRoute>
                 <AccountPage />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/daily"
+            element={
+              <AuthRoute>
+                <DailyRecordPage />
               </AuthRoute>
             }
           />
